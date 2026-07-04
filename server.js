@@ -11,6 +11,7 @@ const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const memberRoutes = require('./routes/member');
 const adminRoutes = require('./routes/admin');
+const { requireAdmin } = require('./lib/auth');
 
 const app = express();
 
@@ -21,6 +22,11 @@ if (!fs.existsSync(CARD_PATH)) {
   console.warn(`WARNING: ${CARD_PATH} is missing — /card/download will fail until it's added.`);
 }
 
+// The page-viewer iframes every route on the same origin, so it needs
+// frame-ancestors 'self' — scoped to when the flag is on so production's
+// CSP stays exactly as strict as before.
+const PREVIEW_ENABLED = process.env.ENABLE_PREVIEW === '1';
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -30,9 +36,11 @@ app.use(
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"]
+        connectSrc: ["'self'"],
+        ...(PREVIEW_ENABLED ? { frameAncestors: ["'self'"] } : {})
       }
-    }
+    },
+    frameguard: PREVIEW_ENABLED ? { action: 'sameorigin' } : undefined
   })
 );
 
@@ -46,6 +54,10 @@ app.use(publicRoutes);
 app.use(authRoutes);
 app.use(memberRoutes);
 app.use(adminRoutes);
+
+if (PREVIEW_ENABLED) {
+  app.use('/preview', requireAdmin, require('./routes/preview'));
+}
 
 app.use((req, res) => {
   res.status(404).send('Not found.');
