@@ -1,0 +1,26 @@
+{
+  "name": "6ampoet",
+  "version": "1.0.0",
+  "private": true,
+  "description": "6ampoet Founding 100 launch site",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node migrate.js",
+    "hash-password": "node scripts/hash-password.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.635.0",
+    "@aws-sdk/s3-request-presigner": "^3.635.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "pg": "^8.12.0",
+    "resend": "^4.0.0"
+  }
+}
