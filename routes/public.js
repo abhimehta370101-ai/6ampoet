@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/healthz', (req, res) => res.status(200).send('ok'));
 
-router.get('/', async (req, res) => {
+router.get('/join', async (req, res) => {
   const cap = Number(process.env.FOUNDING_CAP || 100);
 
   try {

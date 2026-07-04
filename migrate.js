@@ -35,6 +35,10 @@ const statements = [
     email TEXT UNIQUE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`,
+  `CREATE TABLE IF NOT EXISTS card_downloads (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`,
   `CREATE INDEX IF NOT EXISTS idx_magic_tokens_email ON magic_tokens(email)`,
   `CREATE INDEX IF NOT EXISTS idx_testimonials_approved ON testimonials(approved, display_order, created_at)`
 ];

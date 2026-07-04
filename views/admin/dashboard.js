@@ -1,6 +1,6 @@
 const { adminShell } = require('./shared');
 
-function dashboardPage({ foundingCount, cap, waitlistCount, pendingTestimonialCount, ebookReady, blastResult }) {
+function dashboardPage({ foundingCount, cap, waitlistCount, pendingTestimonialCount, ebookReady, blastResult, cardDownloadsTotal, cardDownloadsRecent }) {
   const blastFlash = blastResult
     ? `<div class="flash">Ebook blast complete — sent to ${blastResult.sent} member(s)${blastResult.failed ? `, ${blastResult.failed} failed` : ''}.</div>`
     : '';
@@ -27,6 +27,10 @@ function dashboardPage({ foundingCount, cap, waitlistCount, pendingTestimonialCo
       <div class="stat-card">
         <div class="num">${pendingTestimonialCount}</div>
         <div class="label">Pending testimonials</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">${cardDownloadsTotal}</div>
+        <div class="label">Card downloads (${cardDownloadsRecent} in last 7 days)</div>
       </div>
     </div>
 

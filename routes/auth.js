@@ -63,7 +63,7 @@ router.post('/auth/request', async (req, res) => {
 
 router.get('/auth/verify', async (req, res) => {
   const token = String(req.query.token || '');
-  if (!token) return res.redirect('/?auth=invalid');
+  if (!token) return res.redirect('/join?auth=invalid');
 
   const tokenHash = hashMagicToken(token);
 
@@ -75,7 +75,7 @@ router.get('/auth/verify', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.redirect('/?auth=invalid');
+      return res.redirect('/join?auth=invalid');
     }
 
     const { id: tokenId, email } = result.rows[0];
@@ -97,7 +97,7 @@ router.get('/auth/verify', async (req, res) => {
         'INSERT INTO waitlist (email) VALUES ($1) ON CONFLICT (email) DO NOTHING',
         [email]
       );
-      return res.redirect('/?waitlisted=1');
+      return res.redirect('/join?waitlisted=1');
     }
 
     const insertResult = await db.query(
@@ -130,7 +130,7 @@ router.get('/auth/verify', async (req, res) => {
     return res.redirect('/member');
   } catch (err) {
     console.error('auth/verify failed:', err);
-    return res.redirect('/?auth=error');
+    return res.redirect('/join?auth=error');
   }
 });
 

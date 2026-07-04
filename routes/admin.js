@@ -52,11 +52,13 @@ router.get('/admin', requireAdmin, async (req, res) => {
   try {
     const cap = Number(process.env.FOUNDING_CAP || 100);
 
-    const [foundingResult, waitlistResult, pendingResult, ebookReady] = await Promise.all([
+    const [foundingResult, waitlistResult, pendingResult, ebookReady, cardTotalResult, cardRecentResult] = await Promise.all([
       db.query("SELECT COUNT(*)::int AS count FROM members WHERE tier = 'founding'"),
       db.query('SELECT COUNT(*)::int AS count FROM waitlist'),
       db.query('SELECT COUNT(*)::int AS count FROM testimonials WHERE approved = false'),
-      r2.ebookExists()
+      r2.ebookExists(),
+      db.query('SELECT COUNT(*)::int AS count FROM card_downloads'),
+      db.query("SELECT COUNT(*)::int AS count FROM card_downloads WHERE created_at > now() - interval '7 days'")
     ]);
 
     let blastResult = null;
@@ -71,7 +73,9 @@ router.get('/admin', requireAdmin, async (req, res) => {
         waitlistCount: waitlistResult.rows[0].count,
         pendingTestimonialCount: pendingResult.rows[0].count,
         ebookReady,
-        blastResult
+        blastResult,
+        cardDownloadsTotal: cardTotalResult.rows[0].count,
+        cardDownloadsRecent: cardRecentResult.rows[0].count
       })
     );
   } catch (err) {
