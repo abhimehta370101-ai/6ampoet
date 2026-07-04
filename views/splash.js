@@ -46,6 +46,8 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>6am Poet — poetry for the hour before the world wakes</title>
 <meta name="description" content="Take the 6am Poet card with you — a numbered edition, no email required — and join the Founding 100 for a poem every morning.">
+<link rel="icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap" rel="stylesheet">
@@ -153,15 +155,15 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
   /* Pocket-card preview: clickable, flips gradient front -> poem back,
      then triggers the numbered download */
   .card-flip{
-    width:min(300px,74vw);aspect-ratio:1050/600;
-    margin:2.6rem auto 1.5rem;
+    width:clamp(240px, 78vw, 460px);aspect-ratio:286.016/178.016;
+    margin:3rem auto 1.75rem;
     perspective:1100px;cursor:pointer;border:none;background:none;
     display:block;padding:0;
     transition:opacity 1.4s ease, transform 1.4s ease;
   }
   .card-flip:focus-visible{outline:3px solid var(--violet);outline-offset:5px;border-radius:12px}
   .card-inner{
-    position:relative;width:100%;height:100%;
+    display:block;position:relative;width:100%;height:100%;
     transform-style:preserve-3d;
     transition:transform .9s cubic-bezier(.35,0,.25,1);
   }
@@ -178,12 +180,6 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
     background:linear-gradient(90deg,
       var(--gold) 0%, var(--ember) 20%, var(--rose) 36%,
       var(--violet) 58%, var(--plum) 80%, var(--midnight) 100%);
-    display:flex;align-items:flex-end;justify-content:flex-start;
-    padding:.7rem .9rem;
-  }
-  .card-face--front span{
-    font-family:"Fraunces",serif;font-size:.72rem;letter-spacing:.14em;
-    text-transform:uppercase;color:rgba(245,239,230,.9);
   }
   .card-face--back{
     transform:rotateY(180deg);
@@ -198,7 +194,7 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
     display:flex;flex-direction:column;justify-content:center;
     padding:.75rem 1.1rem;text-align:left;
     font-family:"Fraunces",serif;font-weight:300;
-    font-size:clamp(.5rem,2.1vw,.62rem);line-height:1.45;
+    font-size:clamp(.62rem,2.6vw,.82rem);line-height:1.45;
   }
   .card-face--back .l1{margin-bottom:.35em}
   .card-face--back .l2{margin-bottom:.55em}
@@ -236,7 +232,7 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
     position:relative;z-index:1;max-width:34rem;margin:0 auto;
     padding:0 1.4rem 12vh;text-align:center;color:var(--paper);
     opacity:0;transform:translateY(18px);
-    transition:opacity 1.8s ease 2.6s, transform 1.8s ease 2.6s;
+    transition:opacity 1.8s ease .6s, transform 1.8s ease .6s;
     visibility:hidden;
   }
   body.night .nightfall{opacity:1;transform:none;visibility:visible}
@@ -304,29 +300,16 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
   </svg>
 
   <main>
-    <!-- Sun logo: rebuilt inline so it sits on the gradient with no white box -->
-    <svg class="sun" viewBox="0 0 120 120" role="img" aria-label="6am Poet rising sun">
-      <defs>
-        <linearGradient id="sunset" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"  stop-color="#FFDFA3"/>
-          <stop offset="52%" stop-color="#FFAF62"/>
-          <stop offset="53%" stop-color="#F79355"/>
-          <stop offset="100%" stop-color="#EE7A4E"/>
-        </linearGradient>
-      </defs>
-      <circle cx="60" cy="60" r="52" fill="url(#sunset)"/>
-    </svg>
+    <img class="sun" src="/img/6ampoet-sun.png" width="120" height="120" alt="6am Poet">
 
     <h1 class="wordmark">6am Poet</h1>
     <p class="whisper">Poetry for the hour before the world wakes.</p>
 
     <section class="day-only" aria-label="Take the 6am Poet card">
       <button class="card-flip" id="cardFlip" type="button"
-              aria-label="Flip the 6am Poet card and download your numbered copy">
+              aria-label="Flip the 6am Poet card to see the back" aria-pressed="false">
         <span class="card-inner">
-          <span class="card-face card-face--front" aria-hidden="true">
-            <span>Breathe in life</span>
-          </span>
+          <span class="card-face card-face--front" aria-hidden="true"></span>
           <span class="card-face card-face--back" aria-hidden="true">
             <span class="l1">Breathe in Life</span>
             <span class="l2">Dare to Be</span>
@@ -400,7 +383,18 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
   scheduleShooter();
 
   function nightfall(){
-    if (!body.classList.contains("night")) body.classList.add("night");
+    if (body.classList.contains("night")) return;
+    body.classList.add("night");
+    var target = document.getElementById("nightfall");
+    if (!target) return;
+    if (reduced) {
+      target.scrollIntoView({ block: "start" });
+    } else {
+      // Small head start so the sky crossfade is visible before the glide begins.
+      setTimeout(function(){
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
+    }
   }
 
   /* ----- Download → numbered PDF → transition ----- */
@@ -439,7 +433,6 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
       .catch(function(err){
         downloading = false;
         if (btn) { btn.disabled = false; btn.textContent = "Take the card with you"; }
-        if (card) card.classList.remove("flipped");
         var msg = err.message === "busy"
           ? "The sky is crowded right now — try again in a minute."
           : "Something slipped. Try the download again.";
@@ -449,10 +442,9 @@ function renderSplash({ foundingCount = 0, cap = 100, hasCard = false } = {}) {
   }
 
   if (card) card.addEventListener("click", function(){
-    if (downloading) return;
-    card.classList.add("flipped");
-    // Begin the download as the flip lands (transition is .9s).
-    setTimeout(startDownload, reduced ? 0 : 650);
+    var next = !card.classList.contains("flipped");
+    card.classList.toggle("flipped", next);
+    card.setAttribute("aria-pressed", String(next));
   });
   if (btn) btn.addEventListener("click", startDownload);
 
